@@ -210,14 +210,12 @@ namespace ImageClipboardModify
             {
                 Directory.Delete(dir, true);
                 Directory.CreateDirectory(dir);
-                _mainForm.ClearHistory();
-                _mainForm.SetStatus("History cleared");
-                _trayIcon.ShowBalloonTip(2000, "Cleared", "All images deleted.", ToolTipIcon.Info);
             }
-            catch (Exception ex)
-            {
-                _mainForm.SetStatus($"Clear failed: {ex.Message}");
-            }
+            catch { }
+
+            _mainForm.ClearHistory();
+            _mainForm.SetStatus("History cleared");
+            _trayIcon.ShowBalloonTip(2000, "Cleared", "All images deleted.", ToolTipIcon.Info);
         }
 
         protected override void Dispose(bool disposing)
