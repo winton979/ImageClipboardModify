@@ -4,54 +4,57 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace ImageClipboardModify;
-
-public class ClipboardWatcher : IDisposable
+namespace ImageClipboardModify
 {
-    private readonly MainForm _form;
-    private bool _disposed;
-
-    public event Action<Image>? ClipboardImageChanged;
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool AddClipboardFormatListener(IntPtr hwnd);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
-
-    private const int WM_CLIPBOARDUPDATE = 0x031D;
-
-    public ClipboardWatcher(MainForm form)
+    public class ClipboardWatcher : IDisposable
     {
-        _form = form;
-        _form.ClipboardUpdate += OnClipboardUpdate;
-        AddClipboardFormatListener(_form.Handle);
-    }
+        private readonly MainForm _form;
+        private bool _disposed;
 
-    private void OnClipboardUpdate()
-    {
-        try
+        public event Action<Image> ClipboardImageChanged;
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool AddClipboardFormatListener(IntPtr hwnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
+
+        private const int WM_CLIPBOARDUPDATE = 0x031D;
+
+        public ClipboardWatcher(MainForm form)
         {
-            if (!Clipboard.ContainsImage())
-                return;
-
-            using var image = Clipboard.GetImage();
-            if (image == null)
-                return;
-
-            ClipboardImageChanged?.Invoke(image);
+            _form = form;
+            _form.ClipboardUpdate += OnClipboardUpdate;
+            AddClipboardFormatListener(_form.Handle);
         }
-        catch
+
+        private void OnClipboardUpdate()
         {
-            // clipboard access can fail transiently
-        }
-    }
+            try
+            {
+                if (!Clipboard.ContainsImage())
+                    return;
 
-    public void Dispose()
-    {
-        if (_disposed) return;
-        _disposed = true;
-        RemoveClipboardFormatListener(_form.Handle);
-        _form.ClipboardUpdate -= OnClipboardUpdate;
+                using (var image = Clipboard.GetImage())
+                {
+                    if (image == null)
+                        return;
+
+                    ClipboardImageChanged?.Invoke(image);
+                }
+            }
+            catch
+            {
+                // clipboard access can fail transiently
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+            RemoveClipboardFormatListener(_form.Handle);
+            _form.ClipboardUpdate -= OnClipboardUpdate;
+        }
     }
 }

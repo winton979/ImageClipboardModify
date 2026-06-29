@@ -2,19 +2,27 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>9.0</LangVersion>
     <ApplicationIcon>Resources\tray.ico</ApplicationIcon>
     <AssemblyName>ImageClipboardModify</AssemblyName>
     <RootNamespace>ImageClipboardModify</RootNamespace>
-    <Nullable>enable</Nullable>
     <Version>1.0.0</Version>
     <Authors>ImageClipboardModify Contributors</Authors>
     <Description>Clipboard image viewer with one-click copy and save</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Resources\tray.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
 </Project>

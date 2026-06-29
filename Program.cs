@@ -2,30 +2,32 @@ using System;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace ImageClipboardModify;
-
-internal static class Program
+namespace ImageClipboardModify
 {
-    private static Mutex? _mutex;
-
-    [STAThread]
-    static void Main()
+    internal static class Program
     {
-        const string mutexName = "Global\\ImageClipboardModify_SingleInstance";
-        _mutex = new Mutex(true, mutexName, out bool createdNew);
+        private static Mutex _mutex;
 
-        if (!createdNew)
+        [STAThread]
+        static void Main()
         {
-            MessageBox.Show("ImageClipboardModify is already running.", "Info",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
-            return;
+            const string mutexName = "Global\\ImageClipboardModify_SingleInstance";
+            _mutex = new Mutex(true, mutexName, out bool createdNew);
+
+            if (!createdNew)
+            {
+                MessageBox.Show("ImageClipboardModify is already running.", "Info",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            using (var context = new MainApplicationContext())
+            {
+                Application.Run(context);
+            }
         }
-
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-        Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
-
-        using var context = new MainApplicationContext();
-        Application.Run(context);
     }
 }

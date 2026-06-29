@@ -1,59 +1,58 @@
 using System;
 using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
-namespace ImageClipboardModify.Models;
-
-public class AppConfig
+namespace ImageClipboardModify.Models
 {
-    public string SaveFolder { get; set; } = GetDefaultSaveFolder();
-    public string Template { get; set; } = "请查看图片：\r\n\r\n{path}";
-    public bool AutoStartup { get; set; } = true;
-    public string SaveFormat { get; set; } = "png";
-
-    private static readonly string ConfigPath =
-        Path.Combine(AppContext.BaseDirectory, "config.json");
-
-    private static readonly JsonSerializerOptions JsonOptions = new()
+    public class AppConfig
     {
-        WriteIndented = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.Never
-    };
+        public string SaveFolder { get; set; } = GetDefaultSaveFolder();
+        public string Template { get; set; } = "请查看图片：\r\n\r\n{path}";
+        public bool AutoStartup { get; set; } = true;
+        public string SaveFormat { get; set; } = "png";
 
-    public static string GetDefaultSaveFolder()
-    {
-        return Directory.Exists("D:\\") ? "D:\\ClipboardImages" : "C:\\ClipboardImages";
-    }
+        private static readonly string ConfigPath =
+            Path.Combine(AppContext.BaseDirectory, "config.json");
 
-    public static AppConfig Load()
-    {
-        if (!File.Exists(ConfigPath))
-            return new AppConfig();
-
-        try
+        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
-            var json = File.ReadAllText(ConfigPath);
-            return JsonSerializer.Deserialize<AppConfig>(json, JsonOptions) ?? new AppConfig();
-        }
-        catch
+            Formatting = Formatting.Indented
+        };
+
+        public static string GetDefaultSaveFolder()
         {
-            return new AppConfig();
+            return Directory.Exists("D:\\") ? "D:\\ClipboardImages" : "C:\\ClipboardImages";
         }
-    }
 
-    public void Save()
-    {
-        var json = JsonSerializer.Serialize(this, JsonOptions);
-        File.WriteAllText(ConfigPath, json);
-    }
+        public static AppConfig Load()
+        {
+            if (!File.Exists(ConfigPath))
+                return new AppConfig();
 
-    public void Reload()
-    {
-        var loaded = Load();
-        SaveFolder = loaded.SaveFolder;
-        Template = loaded.Template;
-        AutoStartup = loaded.AutoStartup;
-        SaveFormat = loaded.SaveFormat;
+            try
+            {
+                var json = File.ReadAllText(ConfigPath);
+                return JsonConvert.DeserializeObject<AppConfig>(json, JsonSettings) ?? new AppConfig();
+            }
+            catch
+            {
+                return new AppConfig();
+            }
+        }
+
+        public void Save()
+        {
+            var json = JsonConvert.SerializeObject(this, JsonSettings);
+            File.WriteAllText(ConfigPath, json);
+        }
+
+        public void Reload()
+        {
+            var loaded = Load();
+            SaveFolder = loaded.SaveFolder;
+            Template = loaded.Template;
+            AutoStartup = loaded.AutoStartup;
+            SaveFormat = loaded.SaveFormat;
+        }
     }
 }
