@@ -58,15 +58,16 @@ Default template:
 
 ### Build
 
-Requires .NET 8 SDK on Windows 10/11.
+Requires .NET Framework 4.8 SDK or Visual Studio on Windows 10/11.
 
 ```bash
 dotnet build
-
-# Single-file EXE
-dotnet publish -c Release -r win-x64 --self-contained \
-  -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+dotnet publish -c Release
 ```
+
+Output: `bin/Release/net48/publish/ImageClipboardModify.exe`
+
+No runtime dependency — .NET Framework 4.8 is built into Windows 10 1703+ and Windows 11.
 
 ### License
 
@@ -128,15 +129,16 @@ ImageClipboardModify 自动检测并显示预览
 
 ### 构建
 
-需要 .NET 8 SDK，Windows 10/11。
+需要 .NET Framework 4.8 SDK 或 Visual Studio，Windows 10/11。
 
 ```bash
 dotnet build
-
-# 单文件 EXE
-dotnet publish -c Release -r win-x64 --self-contained \
-  -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+dotnet publish -c Release
 ```
+
+输出：`bin/Release/net48/publish/ImageClipboardModify.exe`
+
+无运行时依赖 — .NET Framework 4.8 已内置于 Windows 10 1703+ 和 Windows 11。
 
 ### 开源协议
 
