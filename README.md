@@ -8,11 +8,7 @@
 
 ## English
 
-A lightweight Windows tray utility that captures clipboard images and provides one-click copy of image paths as text.
-
-### Why
-
-Claude Code and other CLI-based AI tools do not support multimodal image input. When you paste an image, it gets parsed as `[Image]` which causes errors. **ImageClipboardModify** solves this by letting you quickly copy the saved image path as plain text — ready to paste into any AI tool or chat window.
+A lightweight Windows tray utility that saves clipboard images to disk and copies a customizable text (with the image path) back to the clipboard.
 
 ### How It Works
 
@@ -23,16 +19,16 @@ ImageClipboardModify detects it and shows a preview
         ↓
 Click "Copy to Clipboard"
         ↓
-Image saved to disk + template text (with path) copied to clipboard
+Image saved to disk + custom text (with path) copied to clipboard
         ↓
-Paste into Claude Code / ChatGPT / any text field
+Paste anywhere
 ```
 
 ### Features
 
 - **Clipboard Monitoring** — Auto-detects when an image is copied, zero configuration
-- **Image Preview** — See the clipboard image before copying
-- **One-Click Copy** — Saves image to disk and copies template text with path
+- **Image Preview** — See the clipboard image before saving
+- **Save + Custom Text** — Saves image to disk and copies user-defined text containing the path
 - **Open in Viewer** — Open image in your default system image viewer
 - **History Panel** — Browse and reuse previously saved images
 - **Configurable Template** — Customize the output text format
@@ -79,11 +75,7 @@ No runtime dependency — .NET Framework 4.8 is built into Windows 10 1703+ and 
 
 ## 中文
 
-轻量级 Windows 托盘工具，捕获剪切板图片并一键复制图片路径文本。
-
-### 为什么做这个
-
-Claude Code 等 CLI 类 AI 工具不支持多模态图片输入，粘贴图片会被解析成 `[Image]` 导致报错。**ImageClipboardModify** 解决这个问题：快速将保存的图片路径复制为纯文本，直接粘贴到 Claude Code、ChatGPT 或任何文本输入框。
+轻量级 Windows 托盘工具：把剪切板里的图片保存到本地，并把自定义文字（包含图片路径）写回剪切板。
 
 ### 使用流程
 
@@ -94,19 +86,19 @@ ImageClipboardModify 自动检测并显示预览
         ↓
 点击「Copy to Clipboard」
         ↓
-图片保存到磁盘 + 模板文本（含路径）写入剪切板
+图片保存到本地 + 自定义文字（含路径）写入剪切板
         ↓
-粘贴到 Claude Code / ChatGPT / 任何文本框
+粘贴到任意位置
 ```
 
 ### 功能
 
 - **剪切板监听** — 自动检测图片复制，零配置
-- **图片预览** — 复制前先看清楚
-- **一键复制** — 保存图片 + 复制模板文本
+- **图片预览** — 保存前先看清楚
+- **本地存储 + 自定义文字** — 图片落盘，并把用户自定义的文字（含路径）写入剪切板
 - **外部打开** — 用系统默认图片查看器打开
 - **历史记录** — 右侧面板浏览和复用已保存图片
-- **可配置模板** — 自定义输出文本格式
+- **可配置模板** — 自定义输出文字格式
 - **开机启动** — 可选，写入注册表，无需管理员权限
 - **系统托盘** — 最小化到托盘后台运行
 
