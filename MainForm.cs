@@ -11,6 +11,7 @@ namespace ImageClipboardModify
     {
         public event Action ClipboardUpdate;
         public event Action CopyRequested;
+        public event Action PasteAndCopyRequested;
         public event Action ClearHistoryRequested;
 
         private const int WM_CLIPBOARDUPDATE = 0x031D;
@@ -18,6 +19,7 @@ namespace ImageClipboardModify
         private PictureBox _preview;
         private Label _infoLabel;
         private Button _copyButton;
+        private Button _pasteAndCopyButton;
         private Button _openButton;
         private StatusStrip _statusBar;
         private ToolStripStatusLabel _statusLabel;
@@ -158,6 +160,16 @@ namespace ImageClipboardModify
             };
             _copyButton.Click += (_, _) => CopyRequested?.Invoke();
             btnPanel.Controls.Add(_copyButton);
+
+            _pasteAndCopyButton = new Button
+            {
+                Text = "Paste and Copy",
+                Width = 130,
+                Height = 28,
+            };
+            // 无条件启用：主动从剪切板拉取,兜底 watcher 漏掉的情况
+            _pasteAndCopyButton.Click += (_, _) => PasteAndCopyRequested?.Invoke();
+            btnPanel.Controls.Add(_pasteAndCopyButton);
 
             _openButton = new Button
             {

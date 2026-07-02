@@ -29,6 +29,7 @@ namespace ImageClipboardModify
             _clipboardWatcher.ClipboardImageChanged += OnClipboardImageChanged;
 
             _mainForm.CopyRequested += OnCopyRequested;
+            _mainForm.PasteAndCopyRequested += OnPasteAndCopyRequested;
             _mainForm.ClearHistoryRequested += OnClearHistory;
 
             _trayIcon = CreateTrayIcon();
@@ -50,6 +51,34 @@ namespace ImageClipboardModify
         private void OnCopyRequested()
         {
             var image = _mainForm.CurrentImage;
+            if (image == null)
+            {
+                _trayIcon.ShowBalloonTip(2000, "No Image", "No image to copy.", ToolTipIcon.Warning);
+                return;
+            }
+
+            DoCopy(image);
+        }
+
+        // 主动从剪切板拉取最新图片再 copy,兜底 watcher 未侦测到的场景
+        private void OnPasteAndCopyRequested()
+        {
+            var image = ClipboardWatcher.TryReadClipboardImage();
+            if (image == null)
+            {
+                _trayIcon.ShowBalloonTip(2000, "No Image", "Clipboard has no image.", ToolTipIcon.Warning);
+                return;
+            }
+
+            using (image)
+            {
+                _mainForm.ShowClipboardImage(image);
+                DoCopy(_mainForm.CurrentImage);
+            }
+        }
+
+        private void DoCopy(Image image)
+        {
             if (image == null)
             {
                 _trayIcon.ShowBalloonTip(2000, "No Image", "No image to copy.", ToolTipIcon.Warning);
