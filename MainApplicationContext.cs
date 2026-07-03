@@ -94,6 +94,7 @@ namespace ImageClipboardModify
 
                 _mainForm.SetStatus($"Copied: {Path.GetFileName(path)}");
                 _mainForm.AddToHistory(path);
+                _mainForm.SetCurrentPath(path);
                 _trayIcon.ShowBalloonTip(2000, "Copied", Path.GetFileName(path), ToolTipIcon.Info);
             }
             catch (Exception ex)

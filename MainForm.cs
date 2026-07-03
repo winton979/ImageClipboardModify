@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
@@ -28,9 +29,15 @@ namespace ImageClipboardModify
         private Label _historyInfoLabel;
 
         private Image _currentImage;
+        private string _currentPath;
         private readonly List<string> _historyPaths = new List<string>();
 
         public Image CurrentImage => _currentImage;
+
+        public void SetCurrentPath(string path)
+        {
+            _currentPath = path;
+        }
 
         public MainForm()
         {
@@ -221,12 +228,13 @@ namespace ImageClipboardModify
                 Hide();
         }
 
-        public void ShowClipboardImage(Image image)
+        public void ShowClipboardImage(Image image, string path = null)
         {
             try
             {
                 _currentImage?.Dispose();
                 _currentImage = (Image)image.Clone();
+                _currentPath = path;
 
                 _preview.Image?.Dispose();
                 _preview.Image = (Image)_currentImage.Clone();
@@ -246,6 +254,7 @@ namespace ImageClipboardModify
         {
             _currentImage?.Dispose();
             _currentImage = null;
+            _currentPath = null;
             _preview.Image?.Dispose();
             _preview.Image = null;
             _infoLabel.Text = "No image in clipboard";
@@ -330,7 +339,7 @@ namespace ImageClipboardModify
             try
             {
                 var img = Image.FromFile(path);
-                ShowClipboardImage(img);
+                ShowClipboardImage(img, path);
                 SetStatus($"Loaded: {Path.GetFileName(path)}");
             }
             catch { }
@@ -338,22 +347,39 @@ namespace ImageClipboardModify
 
         private string GetTargetImage()
         {
-            // from current preview or selected history
+            // 当前预览有图:优先用其来源路径;未落盘的剪切板图返回 null,交由调用方落临时盘
             if (_currentImage != null)
-            {
-                // find the most recent path that matches current display
-                if (_historyPaths.Count > 0)
-                    return _historyPaths[0];
-            }
+                return _currentPath != null && File.Exists(_currentPath) ? _currentPath : null;
+
             var idx = _historyList.SelectedIndex;
             if (idx >= 0 && idx < _historyPaths.Count)
                 return _historyPaths[idx];
             return null;
         }
 
+        private string SaveTempForViewer()
+        {
+            try
+            {
+                var path = Path.Combine(Path.GetTempPath(), $"icm_viewer_{Guid.NewGuid():N}.png");
+                _currentImage.Save(path, ImageFormat.Png);
+                _currentPath = path;
+                return path;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private void OpenInViewer()
         {
             var path = GetTargetImage();
+
+            // 当前预览是未落盘的剪切板图片,写到临时文件再打开
+            if (path == null && _currentImage != null)
+                path = SaveTempForViewer();
+
             if (path == null || !File.Exists(path))
             {
                 SetStatus("No image to open");
